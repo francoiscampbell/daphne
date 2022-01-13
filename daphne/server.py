@@ -253,7 +253,12 @@ class Server(object):
         Goes through the set of current application Futures and cleans up
         any that are done/prints exceptions for any that errored.
         """
-        logger.info(f"Num open connections: {len(self.connections)}, num running asyncio tasks: {len(asyncio.all_tasks())}")
+        import threading
+        try:
+            num_tasks = len(asyncio.all_tasks())
+        except Exception:
+            num_tasks = "N/A"
+        logger.info(f"Num open connections: {len(self.connections)}, num running tasks: {num_tasks}, num threads: {threading.active_count()}")
         for protocol, details in list(self.connections.items()):
             disconnected = details.get("disconnected", None)
             application_instance = details.get("application_instance", None)
